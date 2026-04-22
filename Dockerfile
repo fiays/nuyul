@@ -1,36 +1,26 @@
-# Use the official Bun image
-FROM oven/bun:latest as builder
+# use the official Bun image
+FROM oven/bun:1
 
 WORKDIR /app
 
-# Copy root dependency files
+# Copy root package files
 COPY package.json bun.lock ./
 
-# Install root dependencies
-RUN bun install
-
-# Copy client dependency files
+# Copy client package files
 COPY client/package.json client/bun.lock ./client/
 
-# Install client dependencies
+# Install dependencies
+RUN bun install
 RUN cd client && bun install
 
-# Copy everything else
+# Copy the rest of the application
 COPY . .
 
-# Build the client
+# Build the frontend
 RUN cd client && bun run build
 
-# --- Production stage ---
-FROM oven/bun:latest
-
-WORKDIR /app
-
-# Copy all files from builder (including dist)
-COPY --from=builder /app .
-
-# Expose the port
+# Expose the server port
 EXPOSE 3000
 
-# Start the application
+# Start the server
 CMD ["bun", "run", "src/index.ts"]
