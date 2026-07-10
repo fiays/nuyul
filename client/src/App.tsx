@@ -73,7 +73,7 @@ function App() {
   }, [viewingMonth, viewingYear]);
 
   // --- Handlers ---
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (!newCount || !submitDate) return;
 
@@ -103,7 +103,7 @@ function App() {
     }
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
+  const handleUpdate = async (e: any) => {
     e.preventDefault();
     if (!editingRecord) return;
 
@@ -242,7 +242,7 @@ function App() {
                 </motion.div>
             ))}
           </AnimatePresence>
-          
+
           {records.length > 3 && (
             <button 
               className="action-btn" 
