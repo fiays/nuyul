@@ -12,7 +12,7 @@ const app = new Elysia()
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Content-Type', 'Content-Disposition', 'Content-Length']
+    exposeHeaders: ['Content-Type', 'Content-Disposition', 'Content-Length']
   }))
   .use(swagger())
   .use(staticPlugin({
