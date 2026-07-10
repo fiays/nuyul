@@ -28,7 +28,7 @@ export const recordsRoute = new Elysia({ prefix: '/records' })
     await db.insert(dailyRecords).values({
       date: new Date(body.date),
       packageCount: body.packageCount,
-      ratePerPackage: body.ratePerPackage ?? 1100,
+      ratePerPackage: body.ratePerPackage ?? 1000,
     });
     return { success: true, message: 'Record created successfully' };
   }, {
