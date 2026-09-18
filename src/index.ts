@@ -27,5 +27,6 @@ const app = new Elysia()
     port: Number(process.env.PORT) || 3000,
     hostname: '0.0.0.0'
   });
+  export default app;
 
 console.log(`🚀 Server is running at http://${app.server?.hostname}:${app.server?.port}`);

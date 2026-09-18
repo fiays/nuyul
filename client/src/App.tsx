@@ -99,7 +99,6 @@ function App() {
       
       setNewCount('');
       fetchData();
-      alert(`Berhasil menambah ${totalCount} paket!`);
     } catch (error: any) {
       console.error('Error adding record:', error);
       alert('Gagal menambah data: ' + (error.response?.data?.message || error.message));
