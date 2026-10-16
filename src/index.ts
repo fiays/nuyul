@@ -2,9 +2,9 @@ import { Elysia } from 'elysia';
 import { swagger } from '@elysiajs/swagger';
 import { cors } from '@elysiajs/cors';
 import { staticPlugin } from '@elysiajs/static';
-import { recordsRoute } from './routes/records';
-import { summaryRoute } from './routes/summary';
-import { reportRoute } from './routes/report';
+import { recordsRoute } from './routes/records.js';
+import { summaryRoute } from './routes/summary.js';
+import { reportRoute } from './routes/report.js';
 
 export const app = new Elysia()
   .use(cors({
