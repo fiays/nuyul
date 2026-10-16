@@ -5,7 +5,7 @@ import * as schema from './schema.js';
 const connection = await mysql.createConnection({
   uri: process.env.DATABASE_URL!.replace('?ssl-mode=REQUIRED', ''),
   ssl: {
-    rejectUnauthorized: true,
+    rejectUnauthorized: false, // <-- UBAH KE false
   },
 });
 
