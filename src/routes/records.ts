@@ -3,7 +3,7 @@ import { db } from '../db';
 import { dailyRecords } from '../db/schema';
 import { eq, sql, and, gte, lte } from 'drizzle-orm';
 
-export const recordsRoute = new Elysia({ prefix: '/records' })
+export const recordsRoute = new Elysia({ prefix: '/api/records' })
   .get('/', async ({ query }) => {
     const month = query.month ? parseInt(query.month) : null;
     const year = query.year ? parseInt(query.year) : null;

@@ -12,7 +12,7 @@ interface RecordData {
   ratePerPackage: number;
 }
 
-export const reportRoute = new Elysia({ prefix: '/report' })
+export const reportRoute = new Elysia({ prefix: '/api/report' })
   .get('/pdf', async ({ query, set }) => {
     try {
       const month = query.month ? parseInt(query.month) : null;
