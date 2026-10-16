@@ -3,12 +3,10 @@ import axios from 'axios';
 import { Plus, History, Edit2, Trash2, X, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Determine API Base URL based on environment
+// Determine API Base URL based on environment (Diakhiri /api)
 const API_BASE = window.location.hostname === 'localhost' 
-  ? 'http://localhost:3000' 
-  : window.location.protocol === 'https:'
-  ? `https://${window.location.hostname}`
-  : `http://${window.location.hostname}:3000`;
+  ? 'http://localhost:3000/api' 
+  : `${window.location.protocol}//${window.location.host}/api`;
 
 interface SummaryData {
   totalPackages: number | string;
@@ -63,20 +61,27 @@ function App() {
     }
   };
 
+  // --- Effect HANYA untuk Fetch Data (Async Call) ---
   useEffect(() => {
     fetchData();
-    
-    // Auto-adjust submit date when user switches months
-    const currentDate = new Date();
-    if (viewingMonth === currentDate.getMonth() + 1 && viewingYear === currentDate.getFullYear()) {
-      setSubmitDate(currentDate.toISOString().split('T')[0]);
-    } else {
-      setSubmitDate(`${viewingYear}-${String(viewingMonth).padStart(2, '0')}-01`);
-    }
   }, [viewingMonth, viewingYear]);
 
+  // Handler saat berpindah bulan
+  const handleSelectMonth = (monthIndex: number) => {
+    const selectedMonth = monthIndex + 1;
+    setViewingMonth(selectedMonth);
+
+    // Auto-adjust submit date
+    const currentDate = new Date();
+    if (selectedMonth === currentDate.getMonth() + 1 && viewingYear === currentDate.getFullYear()) {
+      setSubmitDate(currentDate.toISOString().split('T')[0]);
+    } else {
+      setSubmitDate(`${viewingYear}-${String(selectedMonth).padStart(2, '0')}-01`);
+    }
+  };
+
   // --- Handlers ---
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCount || !submitDate) return;
 
@@ -105,7 +110,7 @@ function App() {
     }
   };
 
-  const handleUpdate = async (e: any) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingRecord) return;
 
@@ -139,10 +144,7 @@ function App() {
   };
 
   const handleDownloadPDF = async () => {
-    console.log('🔍 Download PDF clicked - Records:', records.length, 'Month:', viewingMonth, 'Year:', viewingYear);
-    
     if (records.length === 0) {
-      console.warn('⚠️ No records found for this month');
       alert('Tidak ada data untuk bulan ini');
       return;
     }
@@ -150,16 +152,12 @@ function App() {
     setDownloadingPDF(true);
     try {
       const downloadUrl = `${API_BASE}/report/pdf?month=${viewingMonth}&year=${viewingYear}`;
-      console.log('📥 Fetching PDF from:', downloadUrl);
       
       const response = await axios.get(downloadUrl, {
         responseType: 'blob',
         timeout: 30000
       });
 
-      console.log('✅ PDF received:', response.headers['content-type'], 'Size:', response.data.size);
-
-      // Create blob and trigger download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -167,10 +165,8 @@ function App() {
       link.setAttribute('download', fileName);
       document.body.appendChild(link);
       
-      console.log('💾 Triggering download with filename:', fileName);
       link.click();
       
-      // Cleanup
       setTimeout(() => {
         link.parentNode?.removeChild(link);
         window.URL.revokeObjectURL(url);
@@ -178,7 +174,7 @@ function App() {
 
       alert('Laporan berhasil diunduh!');
     } catch (error: any) {
-      console.error('❌ Error downloading PDF:', error);
+      console.error('Error downloading PDF:', error);
       const errorMsg = error.response?.data?.error || error.message || 'Unknown error';
       alert('Gagal mengunduh laporan: ' + errorMsg);
     } finally {
@@ -194,7 +190,7 @@ function App() {
           <div 
             key={name}
             className={`month-pill ${viewingMonth === i + 1 ? 'active' : ''}`}
-            onClick={() => setViewingMonth(i + 1)}
+            onClick={() => handleSelectMonth(i)}
           >
             {name}
           </div>
@@ -220,35 +216,34 @@ function App() {
             <div style={{ fontWeight: 700, fontSize: '1.1rem' }}>{summary.recordCount} Days</div>
           </div>
         </div>
-        
       </motion.div>
 
       <button 
-          onClick={handleDownloadPDF}
-          disabled={downloadingPDF || records.length === 0}
-          style={{
-            width: '100%',
-            padding: '10px 15px',
-            backgroundColor: downloadingPDF ? '#9ca3af' : 'var(--accent-color)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: downloadingPDF || records.length === 0 ? 'not-allowed' : 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            opacity: downloadingPDF || records.length === 0 ? 0.6 : 1,
-            transition: 'all 0.2s ease',
-            pointerEvents: 'auto',
-            margin: '20px 0'
-          }}
-        >
-          <Download size={16} />
-          {downloadingPDF ? 'Membuat Laporan...' : 'Download Laporan PDF'}
-        </button>
+        onClick={handleDownloadPDF}
+        disabled={downloadingPDF || records.length === 0}
+        style={{
+          width: '100%',
+          padding: '10px 15px',
+          backgroundColor: downloadingPDF ? '#9ca3af' : 'var(--accent-color)',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: downloadingPDF || records.length === 0 ? 'not-allowed' : 'pointer',
+          fontSize: '0.9rem',
+          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          opacity: downloadingPDF || records.length === 0 ? 0.6 : 1,
+          transition: 'all 0.2s ease',
+          pointerEvents: 'auto',
+          margin: '20px 0'
+        }}
+      >
+        <Download size={16} />
+        {downloadingPDF ? 'Membuat Laporan...' : 'Download Laporan PDF'}
+      </button>
 
       {/* Submission Form */}
       <motion.div className="glass-card">
