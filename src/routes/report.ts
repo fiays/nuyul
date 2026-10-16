@@ -1,6 +1,6 @@
 import { Elysia, t } from 'elysia';
-import { db } from '../db';
-import { dailyRecords } from '../db/schema';
+import { db } from '../db/index.js';
+import { dailyRecords } from '../db/schema.js';
 import { sql } from 'drizzle-orm';
 import PDFDocument from 'pdfkit';
 import { Readable } from 'stream';

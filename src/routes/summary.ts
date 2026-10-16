@@ -1,6 +1,6 @@
 import { Elysia, t } from 'elysia';
-import { db } from '../db';
-import { dailyRecords } from '../db/schema';
+import { db } from '../db/index.js';
+import { dailyRecords } from '../db/schema.js';
 import { sql, and, gte, lte } from 'drizzle-orm';
 
 export const summaryRoute = new Elysia({ prefix: '/api/summary' })
